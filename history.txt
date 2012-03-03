@@ -1,0 +1,26 @@
+Simple Indent: History
+컴컴컴컴컴컴컴컴컴컴�
+
+Legend:  + added
+         - removed
+         * changed
+         ! fixed
+
+v2.0 03/03/12
+-------------
+
+ * Rebased on latest Block Indent and ported to FAR 3.
+ ! As a consequence of the above, the plugin no longer destroys
+   Unicode characters.
+ * Plugin no longer replaces spaces with tabs.
+ ! Plugin no longer removes slack whitespace (e.g. whitespace after
+   tabs).
+ ! Fixed "sliding" selection.
+ + The plugin's action is grouped as a single undo/redo operation.
+ + Better documentation
+
+v1.0 18/05/08
+-------------
+
+ + First release.
+

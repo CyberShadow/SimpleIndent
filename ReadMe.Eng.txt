@@ -23,7 +23,9 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 -------------------------------------------------------------------------------
 Usage:
 
-Select some lines, and press Tab to indent and Shift+Tab to unindent.
+Select some lines, and press Tab to indent and Shift+Tab to unindent. The
+plugin will insert tabs, or spaces if the "Expand tabs to spaces" editor option
+is enabled. The number of spaces added or removed is set by the tab size.
 
 The plugin will only activate if the cursor is at the beginning of the line,
 and at the edge or inside the selection. Otherwise, the key press will be
