@@ -1,3 +1,2 @@
-o
-bin
-*.obj
+src/debug.*
+src/final.*

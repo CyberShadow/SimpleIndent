@@ -20,7 +20,9 @@
     along with this program; if not, write to the Free Software
     Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 */
+#include <CRT/crt.hpp>
 #include "plugin.hpp"
+#include "version.hpp"
 
 #if defined(__GNUC__)
 #ifdef __cplusplus
@@ -40,73 +42,57 @@ BOOL WINAPI DllMainCRTStartup(HANDLE hDll,DWORD dwReason,LPVOID lpReserved)
 }
 #endif
 
+// {52d8eecb-acae-42de-9b2f-f1e909948272}
+static const GUID MainGuid =
+{ 0x52d8eecb, 0xacae, 0x42de, { 0x9b, 0x2f, 0xf1, 0xe9, 0x09, 0x94, 0x82, 0x72 } };
+
 
 static struct PluginStartupInfo Info;
 
-void *memcpy(void *dst, const void *src, size_t count)
+void WINAPI GetGlobalInfoW(struct GlobalInfo *Info)
 {
-  void *ret = dst;
-
-  while (count--)
-  {
-    *(char *)dst = *(char *)src;
-    dst = (char *)dst + 1;
-    src = (char *)src + 1;
-  }
-  return (ret);
+  Info->StructSize=sizeof(GlobalInfo);
+  Info->MinFarVersion=FARMANAGERVERSION;
+  Info->Version=PLUGIN_VERSION;
+  Info->Guid=MainGuid;
+  Info->Title=PLUGIN_NAME;
+  Info->Description=PLUGIN_DESC;
+  Info->Author=PLUGIN_AUTHOR;
 }
 
-char *strcpy(char *dst, const char *src)
+void WINAPI SetStartupInfoW(const struct PluginStartupInfo *Info)
 {
-  char *cp = dst;
-
-  while(*cp++ = *src++)
-    ;
-
-  return (dst);
+  ::Info=*Info;
 }
 
-/*
-inline int IsWhite(unsigned char c)
+void WINAPI GetPluginInfoW(struct PluginInfo *Info)
 {
-  return ((c == 32) || (c == 9))?TRUE:FALSE;
-}
-*/
-
-void WINAPI _export SetStartupInfo(const struct PluginStartupInfo *psi)
-{
-  Info=*psi;
+  Info->StructSize=sizeof(*Info);
+  Info->Flags=PF_DISABLEPANELS;
+  Info->PluginMenu.Count=0;
 }
 
-void WINAPI _export GetPluginInfo(struct PluginInfo *pi)
-{
-  pi->StructSize=sizeof(struct PluginInfo);
-  pi->Flags=PF_DISABLEPANELS;
-  pi->PluginMenuStrings=NULL;
-  pi->PluginMenuStringsNumber=0;
-}
-
-HANDLE WINAPI _export OpenPlugin(int OpenFrom, int Item)
+HANDLE WINAPI OpenW(const struct OpenInfo *OInfo)
 {
   return INVALID_HANDLE_VALUE;
 }
 
-int WINAPI _export ProcessEditorInput(const INPUT_RECORD *Rec)
+int WINAPI ProcessEditorInputW(const struct ProcessEditorInputInfo *Info)
 {
-  if (Rec->EventType==KEY_EVENT && 
-      Rec->Event.KeyEvent.bKeyDown && 
-     (Rec->Event.KeyEvent.wVirtualKeyCode & 0xFFFF) == 9 &&
-     (Rec->Event.KeyEvent.dwControlKeyState & (RIGHT_ALT_PRESSED | LEFT_ALT_PRESSED | RIGHT_CTRL_PRESSED | LEFT_CTRL_PRESSED)) == 0)
+  if (Info->Rec.EventType==KEY_EVENT && 
+      Info->Rec.Event.KeyEvent.bKeyDown && 
+     (Info->Rec.Event.KeyEvent.wVirtualKeyCode & 0x7FFF) == 9 &&
+     (Info->Rec.Event.KeyEvent.dwControlKeyState & (RIGHT_ALT_PRESSED | LEFT_ALT_PRESSED | RIGHT_CTRL_PRESSED | LEFT_CTRL_PRESSED)) == 0)
   {
-    bool rev = !(Rec->Event.KeyEvent.dwControlKeyState & (SHIFT_PRESSED));
-    
+    bool rev = !(Info->Rec.Event.KeyEvent.dwControlKeyState & (SHIFT_PRESSED));
+
     struct EditorInfo ei;
-    Info.EditorControl(ECTL_GETINFO,&ei);
+    ::Info.EditorControl(-1, ECTL_GETINFO, 0, &ei);
 
     {
       struct EditorGetString egs;
       egs.StringNumber = -1;
-      Info.EditorControl(ECTL_GETSTRING,&egs);
+      ::Info.EditorControl(-1, ECTL_GETSTRING, 0, &egs);
 
       if (ei.BlockType != BTYPE_STREAM ||
           egs.SelStart != 0 ||
@@ -131,9 +117,9 @@ int WINAPI _export ProcessEditorInput(const INPUT_RECORD *Rec)
         esp.CurLine = line++;
         esp.CurPos = esp.Overtype = 0;
         esp.CurTabPos = esp.TopScreenLine = esp.LeftPos = -1;
-        Info.EditorControl(ECTL_SETPOSITION,&esp);
+        ::Info.EditorControl(-1, ECTL_SETPOSITION, 0, &esp);
         egs.StringNumber = -1;
-        Info.EditorControl(ECTL_GETSTRING,&egs);
+        ::Info.EditorControl(-1, ECTL_GETSTRING, 0, &egs);
         if (loop && ((egs.SelStart == -1) || (egs.SelStart == egs.SelEnd)))
           break;
       }
@@ -149,7 +135,7 @@ int WINAPI _export ProcessEditorInput(const INPUT_RECORD *Rec)
           struct EditorConvertPos ecp;
           ecp.StringNumber = -1;
           ecp.SrcPos = j+1;
-          Info.EditorControl(ECTL_REALTOTAB,&ecp);
+          ::Info.EditorControl(-1, ECTL_REALTOTAB, 0, &ecp);
           x = (--ecp.DestPos)/IndentSize;
           if (!(ecp.DestPos%IndentSize) && !rev)
             x--;
@@ -162,12 +148,12 @@ int WINAPI _export ProcessEditorInput(const INPUT_RECORD *Rec)
           ess.StringText = &egs.StringText[j];
           ess.StringEOL = egs.StringEOL;
           ess.StringLength = egs.StringLength - j;
-          Info.EditorControl(ECTL_SETSTRING,&ess);
+          ::Info.EditorControl(-1, ECTL_SETSTRING, 0, &ess);
         }
         if (x)
         {
           for (int i=0; i<x; i++)
-            Info.EditorControl(ECTL_INSERTTEXT,IndentStr);
+            ::Info.EditorControl(-1, ECTL_INSERTTEXT, 0, IndentStr);
         }
       }
     } while (loop);
@@ -180,10 +166,10 @@ int WINAPI _export ProcessEditorInput(const INPUT_RECORD *Rec)
       esp.LeftPos = ei.LeftPos;
       esp.Overtype = ei.Overtype;
       esp.CurTabPos = -1;
-      Info.EditorControl(ECTL_SETPOSITION,&esp);
+      ::Info.EditorControl(-1, ECTL_SETPOSITION, 0, &esp);
     }
 
-    Info.EditorControl(ECTL_REDRAW, NULL);
+    ::Info.EditorControl(-1, ECTL_REDRAW, 0, NULL);
 
     return 1;
   }
