@@ -1,6 +1,6 @@
 /*
     Simple Indent plugin for FAR Manager
-    
+
     Based on:
 
     Block Indent plugin for FAR Manager
@@ -79,8 +79,8 @@ HANDLE WINAPI OpenW(const struct OpenInfo *OInfo)
 
 int WINAPI ProcessEditorInputW(const struct ProcessEditorInputInfo *Info)
 {
-  if (Info->Rec.EventType==KEY_EVENT && 
-      Info->Rec.Event.KeyEvent.bKeyDown && 
+  if (Info->Rec.EventType==KEY_EVENT &&
+      Info->Rec.Event.KeyEvent.bKeyDown &&
      (Info->Rec.Event.KeyEvent.wVirtualKeyCode & 0x7FFF) == 9 &&
      (Info->Rec.Event.KeyEvent.dwControlKeyState & (RIGHT_ALT_PRESSED | LEFT_ALT_PRESSED | RIGHT_CTRL_PRESSED | LEFT_CTRL_PRESSED)) == 0)
   {
