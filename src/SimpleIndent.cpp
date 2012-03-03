@@ -105,7 +105,8 @@ int WINAPI ProcessEditorInputW(const struct ProcessEditorInputInfo *Info)
     IndentStr[1] = '\0';
     int IndentSize = ei.TabSize;
 
-    for (int line = ei.BlockStartLine; line < ei.TotalLines; line++)
+    int line;
+    for (line = ei.BlockStartLine; line < ei.TotalLines; line++)
     {
       struct EditorSetPosition esp;
       esp.CurLine = line;
@@ -163,6 +164,17 @@ int WINAPI ProcessEditorInputW(const struct ProcessEditorInputInfo *Info)
       esp.Overtype = ei.Overtype;
       esp.CurTabPos = -1;
       ::Info.EditorControl(-1, ECTL_SETPOSITION, 0, &esp);
+    }
+
+    {
+      // Restore selection to how it was before the insertion
+      struct EditorSelect es;
+      es.BlockType = ei.BlockType;
+      es.BlockStartLine = ei.BlockStartLine;
+      es.BlockStartPos = 0;
+      es.BlockWidth = 0;
+      es.BlockHeight = line - ei.BlockStartLine + 1;
+      ::Info.EditorControl(-1, ECTL_SELECT, 0, &es);
     }
 
     ::Info.EditorControl(-1, ECTL_REDRAW, 0, NULL);
