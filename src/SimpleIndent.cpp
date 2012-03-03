@@ -100,6 +100,10 @@ int WINAPI ProcessEditorInputW(const struct ProcessEditorInputInfo *Info)
         return 0;
     }
 
+    struct EditorUndoRedo eur;
+    eur.Command = EUR_BEGIN;
+    ::Info.EditorControl(-1, ECTL_UNDOREDO, 0, &eur);
+
     TCHAR IndentStr[2];
     IndentStr[0] = '\t';
     IndentStr[1] = '\0';
@@ -160,6 +164,9 @@ int WINAPI ProcessEditorInputW(const struct ProcessEditorInputInfo *Info)
       es.BlockHeight = line - ei.BlockStartLine + 1;
       ::Info.EditorControl(-1, ECTL_SELECT, 0, &es);
     }
+
+    eur.Command = EUR_END;
+    ::Info.EditorControl(-1, ECTL_UNDOREDO, 0, &eur);
 
     ::Info.EditorControl(-1, ECTL_REDRAW, 0, NULL);
 
