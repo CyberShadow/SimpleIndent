@@ -84,7 +84,7 @@ int WINAPI ProcessEditorInputW(const struct ProcessEditorInputInfo *Info)
      (Info->Rec.Event.KeyEvent.wVirtualKeyCode & 0x7FFF) == 9 &&
      (Info->Rec.Event.KeyEvent.dwControlKeyState & (RIGHT_ALT_PRESSED | LEFT_ALT_PRESSED | RIGHT_CTRL_PRESSED | LEFT_CTRL_PRESSED)) == 0)
   {
-    bool rev = !(Info->Rec.Event.KeyEvent.dwControlKeyState & (SHIFT_PRESSED));
+    bool rev = !!(Info->Rec.Event.KeyEvent.dwControlKeyState & (SHIFT_PRESSED));
 
     struct EditorInfo ei;
     ::Info.EditorControl(-1, ECTL_GETINFO, 0, &ei);
@@ -103,7 +103,6 @@ int WINAPI ProcessEditorInputW(const struct ProcessEditorInputInfo *Info)
     TCHAR IndentStr[2];
     IndentStr[0] = '\t';
     IndentStr[1] = '\0';
-    int IndentSize = ei.TabSize;
 
     int line;
     for (line = ei.BlockStartLine; line < ei.TotalLines; line++)
@@ -120,37 +119,22 @@ int WINAPI ProcessEditorInputW(const struct ProcessEditorInputInfo *Info)
       if (egs.SelStart == -1 || egs.SelStart == egs.SelEnd)
         break; // Stop when reaching the end of the text selection
 
-      int j = 0;
-      while ((egs.StringText[j]==9 || egs.StringText[j]==32) && (j < egs.StringLength))
-        j++;
-      if ((j || rev) && (j < egs.StringLength))
+      if (!rev) // Indent
       {
-        int x;
+        ::Info.EditorControl(-1, ECTL_INSERTTEXT, 0, IndentStr);
+      }
+      else      // Unindent
+      {
+        if (egs.StringLength > 0)
         {
-          struct EditorConvertPos ecp;
-          ecp.StringNumber = -1;
-          ecp.SrcPos = j+1;
-          ::Info.EditorControl(-1, ECTL_REALTOTAB, 0, &ecp);
-          x = (--ecp.DestPos)/IndentSize;
-          if (!(ecp.DestPos%IndentSize) && !rev)
-            x--;
-          if (rev)
-            x++;
-        }
-
-        {
-          struct EditorSetString ess;
-          ess.StringNumber = -1;
-          ess.StringText = &egs.StringText[j];
-          ess.StringEOL = egs.StringEOL;
-          ess.StringLength = egs.StringLength - j;
-          ::Info.EditorControl(-1, ECTL_SETSTRING, 0, &ess);
-        }
-
-        if (x)
-        {
-          for (int i=0; i<x; i++)
-            ::Info.EditorControl(-1, ECTL_INSERTTEXT, 0, IndentStr);
+          int n = 0;
+          if (egs.StringText[0]=='\t')
+            n = 1;
+          else
+            while (egs.StringText[n]==' ' && n < ei.TabSize)
+              n++;
+          for (int i=0; i<n; i++)
+            ::Info.EditorControl(-1, ECTL_DELETECHAR, 0, NULL);
         }
       }
     }
