@@ -101,30 +101,24 @@ int WINAPI ProcessEditorInputW(const struct ProcessEditorInputInfo *Info)
     }
 
     TCHAR IndentStr[2];
-    IndentStr[0] = 9;
+    IndentStr[0] = '\t';
     IndentStr[1] = '\0';
     int IndentSize = ei.TabSize;
 
-    int loop = TRUE;
-    int line = ei.BlockStartLine;
-
-    do
+    for (int line = ei.BlockStartLine; line < ei.TotalLines; line++)
     {
+      struct EditorSetPosition esp;
+      esp.CurLine = line;
+      esp.CurPos = esp.Overtype = 0;
+      esp.CurTabPos = esp.TopScreenLine = esp.LeftPos = -1;
+      ::Info.EditorControl(-1, ECTL_SETPOSITION, 0, &esp);
+
       struct EditorGetString egs;
-      if (line < ei.TotalLines)
-      {
-        struct EditorSetPosition esp;
-        esp.CurLine = line++;
-        esp.CurPos = esp.Overtype = 0;
-        esp.CurTabPos = esp.TopScreenLine = esp.LeftPos = -1;
-        ::Info.EditorControl(-1, ECTL_SETPOSITION, 0, &esp);
-        egs.StringNumber = -1;
-        ::Info.EditorControl(-1, ECTL_GETSTRING, 0, &egs);
-        if (loop && ((egs.SelStart == -1) || (egs.SelStart == egs.SelEnd)))
-          break;
-      }
-      else
-        break;
+      egs.StringNumber = -1;
+      ::Info.EditorControl(-1, ECTL_GETSTRING, 0, &egs);
+      if (egs.SelStart == -1 || egs.SelStart == egs.SelEnd)
+        break; // Stop when reaching the end of the text selection
+
       int j = 0;
       while ((egs.StringText[j]==9 || egs.StringText[j]==32) && (j < egs.StringLength))
         j++;
@@ -142,6 +136,7 @@ int WINAPI ProcessEditorInputW(const struct ProcessEditorInputInfo *Info)
           if (rev)
             x++;
         }
+
         {
           struct EditorSetString ess;
           ess.StringNumber = -1;
@@ -150,13 +145,14 @@ int WINAPI ProcessEditorInputW(const struct ProcessEditorInputInfo *Info)
           ess.StringLength = egs.StringLength - j;
           ::Info.EditorControl(-1, ECTL_SETSTRING, 0, &ess);
         }
+
         if (x)
         {
           for (int i=0; i<x; i++)
             ::Info.EditorControl(-1, ECTL_INSERTTEXT, 0, IndentStr);
         }
       }
-    } while (loop);
+    }
 
     {
       struct EditorSetPosition esp;
