@@ -1,5 +1,6 @@
 EXPORTS 
    GetPluginInfoW
-   OpenPluginW
+   OpenW
    SetStartupInfoW
+   GetGlobalInfoW
    ProcessEditorInputW

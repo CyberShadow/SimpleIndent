@@ -6,6 +6,11 @@ Legend:  + added
          * changed
          ! fixed
 
+v2.1 03/03/12
+-------------
+
+ * Backported to Far1/2. Source code is now compatible with Far 1/2/3.
+
 v2.0 03/03/12
 -------------
 
