@@ -6,7 +6,9 @@ NAME = SimpleIndent
 SRCS = SimpleIndent.cpp
 DOCS = 
 
+ifdef FAR3
 include $(FARDEV)/unicode_far/makefile_gcc_common
+endif
 
 include $(FARDEV)/plugins/makefile_gcc_def_inc
 

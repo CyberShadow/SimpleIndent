@@ -8,6 +8,7 @@ for %%b in (32 64) do for %%f in (1 2 3) do (
 )
 mkdir out\src
 copy src\* out\src\
+if exist SimpleIndent.7z del SimpleIndent.7z
 cd out
 7z -mx9 a ..\SimpleIndent.7z *
 cd ..
