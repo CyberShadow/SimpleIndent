@@ -94,13 +94,13 @@ int WINAPI ProcessEditorInputW(const struct ProcessEditorInputInfo *Info)
       egs.StringNumber = -1;
       ::Info.EditorControl(-1, ECTL_GETSTRING, 0, &egs);
 
-      if (ei.BlockType != BTYPE_STREAM ||
-          egs.SelStart != 0 ||
-          ei.CurPos != 0)
+      if (ei.BlockType != BTYPE_STREAM ||  // Ignore block selection
+          egs.SelStart != 0 ||             // Only activate if selection starts on a line start
+          ei.CurPos != 0)                  // Only activate if the cursor is at the line start
         return 0;
     }
 
-    char IndentStr[2];
+    TCHAR IndentStr[2];
     IndentStr[0] = 9;
     IndentStr[1] = '\0';
     int IndentSize = ei.TabSize;
