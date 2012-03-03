@@ -24,7 +24,11 @@ BOOL WINAPI DllMainCRTStartup(HANDLE hDll,DWORD dwReason,LPVOID lpReserved)
 // ********** Exported plugin API **********
 
 #if FARMANAGERVERSION_MAJOR >= 2
+ #define FAR2
  #define WIDE
+#endif
+#if FARMANAGERVERSION_MAJOR >= 3
+ #define FAR3
 #endif
 
 #ifdef WIDE
@@ -35,7 +39,7 @@ BOOL WINAPI DllMainCRTStartup(HANDLE hDll,DWORD dwReason,LPVOID lpReserved)
 
 // GetGlobalInfo
 
-#if FARMANAGERVERSION_MAJOR >= 3
+#ifdef FAR3
  #define ADD_GETGLOBALINFO                                                   \
   void WINAPI GetGlobalInfoW(struct GlobalInfo *Info)                        \
   {                                                                          \
@@ -53,13 +57,13 @@ BOOL WINAPI DllMainCRTStartup(HANDLE hDll,DWORD dwReason,LPVOID lpReserved)
 
 // GetPluginInfo
 
-#if FARMANAGERVERSION_MAJOR >= 3
+#ifdef FAR3
  #define PluginMenuStringsNumber PluginMenu.Count
 #endif
 
 // Open / OpenPlugin
 
-#if FARMANAGERVERSION_MAJOR >= 3
+#ifdef FAR3
  #define OPENPLUGIN HANDLE WINAPI OpenW(const struct OpenInfo *OInfo)
 #else
  #define OPENPLUGIN HANDLE WINAPI WIDE_SUFFIX(OpenPlugin)(int OpenFrom, int Item)
@@ -67,7 +71,7 @@ BOOL WINAPI DllMainCRTStartup(HANDLE hDll,DWORD dwReason,LPVOID lpReserved)
 
 // ProcessEditorInput
 
-#if FARMANAGERVERSION_MAJOR >= 3
+#ifdef FAR3
  #define PROCESSEDITORINPUT int WINAPI ProcessEditorInputW(const struct ProcessEditorInputInfo *_Info)
  #define PROCESSEDITORINPUT_REC (&(_Info->Rec))
 #else
@@ -77,6 +81,6 @@ BOOL WINAPI DllMainCRTStartup(HANDLE hDll,DWORD dwReason,LPVOID lpReserved)
 
 // ********** Far service API **********
 
-#if FARMANAGERVERSION_MAJOR >= 3
+#ifdef FAR3
  #define EditorControl(cmd,str) EditorControl(-1,cmd,0,str)
 #endif

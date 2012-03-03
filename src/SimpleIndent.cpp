@@ -74,7 +74,7 @@ PROCESSEDITORINPUT
         return 0;
     }
 
-#if FARMANAGERVERSION_MAJOR >= 2
+#ifdef FAR2
     struct EditorUndoRedo eur;
     eur.Command = EUR_BEGIN;
     Info.EditorControl(ECTL_UNDOREDO, &eur);
@@ -141,7 +141,7 @@ PROCESSEDITORINPUT
       Info.EditorControl(ECTL_SELECT, &es);
     }
 
-#if FARMANAGERVERSION_MAJOR >= 2
+#ifdef FAR2
     eur.Command = EUR_END;
     Info.EditorControl(ECTL_UNDOREDO, &eur);
 #endif
