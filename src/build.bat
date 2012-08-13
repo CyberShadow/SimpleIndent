@@ -5,7 +5,7 @@ if "%FAR3%"=="" set FAR3=../../../FAR
 
 %MAKER% FARDEV=%FAR2%/fardev                        %DIRSUFF%=.Far1
 %MAKER% FARDEV=%FAR2%/fardev WIDE=1                 %DIRSUFF%=.Far2
-%MAKER% FARDEV=%FAR3%/fardev DEF_NAME=SimpleIndent3 %DIRSUFF%=.Far3 FAR3=1
+%MAKER% FARDEV=%FAR3%        DEF_NAME=SimpleIndent3 %DIRSUFF%=.Far3 FAR3=1
 goto :eof
 
 :config
