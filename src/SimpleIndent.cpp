@@ -101,7 +101,8 @@ PROCESSEDITORINPUT
 
       if (!rev) // Indent
       {
-        Info.EditorControl(ECTL_INSERTTEXT, IndentStr);
+        if (egs.StringLength > 0)
+          Info.EditorControl(ECTL_INSERTTEXT, IndentStr);
       }
       else      // Unindent
       {
