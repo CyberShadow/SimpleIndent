@@ -80,7 +80,7 @@ BOOL WINAPI DllMainCRTStartup(HANDLE hDll,DWORD dwReason,LPVOID lpReserved)
 // ProcessEditorInput
 
 #ifdef FAR3
- #define PROCESSEDITORINPUT int WINAPI ProcessEditorInputW(const struct ProcessEditorInputInfo *_Info)
+ #define PROCESSEDITORINPUT intptr_t WINAPI ProcessEditorInputW(const struct ProcessEditorInputInfo *_Info)
  #define PROCESSEDITORINPUT_REC (&(_Info->Rec))
 #else
  #define PROCESSEDITORINPUT int WINAPI WIDE_SUFFIX(ProcessEditorInput)(const INPUT_RECORD *_Rec)

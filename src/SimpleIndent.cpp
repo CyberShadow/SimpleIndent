@@ -88,7 +88,7 @@ PROCESSEDITORINPUT
     IndentStr[1] = '\0';
 
     int line;
-    for (line = ei.BlockStartLine; line < ei.TotalLines; line++)
+    for (line = (int)ei.BlockStartLine; line < ei.TotalLines; line++)
     {
       struct EditorSetPosition esp;
       INITSIZE(esp);
