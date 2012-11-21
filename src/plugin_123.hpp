@@ -21,7 +21,7 @@ BOOL WINAPI DllMainCRTStartup(HANDLE hDll,DWORD dwReason,LPVOID lpReserved)
 }
 #endif
 
-// ********** Exported plugin API **********
+// **************** General ****************
 
 #if FARMANAGERVERSION_MAJOR >= 2
  #define FAR2
@@ -31,11 +31,19 @@ BOOL WINAPI DllMainCRTStartup(HANDLE hDll,DWORD dwReason,LPVOID lpReserved)
  #define FAR3
 #endif
 
+#ifdef FAR3
+ #define INITSIZE(x) (x).StructSize = sizeof(x)
+#else
+ #define INITSIZE(x)
+#endif
+
 #ifdef WIDE
  #define WIDE_SUFFIX(x) x##W
 #else
  #define WIDE_SUFFIX(x) x
 #endif
+
+// ********** Exported plugin API **********
 
 // GetGlobalInfo
 
@@ -43,7 +51,7 @@ BOOL WINAPI DllMainCRTStartup(HANDLE hDll,DWORD dwReason,LPVOID lpReserved)
  #define ADD_GETGLOBALINFO                                                   \
   void WINAPI GetGlobalInfoW(struct GlobalInfo *Info)                        \
   {                                                                          \
-    Info->StructSize=sizeof(GlobalInfo);                                     \
+    INITSIZE(*Info);                                                         \
     Info->MinFarVersion=FARMANAGERVERSION;                                   \
     Info->Version=PLUGIN_VERSION;                                            \
     Info->Guid=MainGuid;                                                     \

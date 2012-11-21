@@ -61,10 +61,12 @@ PROCESSEDITORINPUT
     bool rev = !!(Rec->Event.KeyEvent.dwControlKeyState & (SHIFT_PRESSED));
 
     struct EditorInfo ei;
+    INITSIZE(ei);
     Info.EditorControl(ECTL_GETINFO, &ei);
 
     {
       struct EditorGetString egs;
+      INITSIZE(egs);
       egs.StringNumber = -1;
       Info.EditorControl(ECTL_GETSTRING, &egs);
 
@@ -76,6 +78,7 @@ PROCESSEDITORINPUT
 
 #ifdef FAR2
     struct EditorUndoRedo eur;
+    INITSIZE(eur);
     eur.Command = EUR_BEGIN;
     Info.EditorControl(ECTL_UNDOREDO, &eur);
 #endif
@@ -88,12 +91,14 @@ PROCESSEDITORINPUT
     for (line = ei.BlockStartLine; line < ei.TotalLines; line++)
     {
       struct EditorSetPosition esp;
+      INITSIZE(esp);
       esp.CurLine = line;
       esp.CurPos = esp.Overtype = 0;
       esp.CurTabPos = esp.TopScreenLine = esp.LeftPos = -1;
       Info.EditorControl(ECTL_SETPOSITION, &esp);
 
       struct EditorGetString egs;
+      INITSIZE(egs);
       egs.StringNumber = -1;
       Info.EditorControl(ECTL_GETSTRING, &egs);
       if (egs.SelStart == -1 || egs.SelStart == egs.SelEnd)
@@ -122,6 +127,7 @@ PROCESSEDITORINPUT
 
     {
       struct EditorSetPosition esp;
+      INITSIZE(esp);
       esp.CurLine = ei.CurLine;
       esp.CurPos = ei.CurPos;
       esp.TopScreenLine = ei.TopScreenLine;
@@ -134,6 +140,7 @@ PROCESSEDITORINPUT
     {
       // Restore selection to how it was before the insertion
       struct EditorSelect es;
+      INITSIZE(es);
       es.BlockType = ei.BlockType;
       es.BlockStartLine = ei.BlockStartLine;
       es.BlockStartPos = 0;
