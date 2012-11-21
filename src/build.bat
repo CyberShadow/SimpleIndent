@@ -1,11 +1,11 @@
 @echo off
 call :config nmake.exe
-if "%FAR2%"=="" set FAR2=../../../FAR2
-if "%FAR3%"=="" set FAR3=../../../FAR
+if "%FAR2DEV%"=="" set FAR2DEV=../../../FAR2
+if "%FAR3DEV%"=="" set FAR3DEV=../../../FAR
 
-%MAKER% FARDEV=%FAR2%/fardev                        %DIRSUFF%=.Far1
-%MAKER% FARDEV=%FAR2%/fardev WIDE=1                 %DIRSUFF%=.Far2
-%MAKER% FARDEV=%FAR3%        DEF_NAME=SimpleIndent3 %DIRSUFF%=.Far3 FAR3=1
+%MAKER% FARDEV=%FAR2DEV%/fardev                        %DIRSUFF%=.Far1
+%MAKER% FARDEV=%FAR2DEV%/fardev WIDE=1                 %DIRSUFF%=.Far2
+%MAKER% FARDEV=%FAR3DEV%        DEF_NAME=SimpleIndent3 %DIRSUFF%=.Far3 FAR3=1
 goto :eof
 
 :config

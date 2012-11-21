@@ -8,8 +8,11 @@ NAME = SimpleIndent
 LINK_OBJS = $(OBJDIR)\SimpleIndent.obj
 DOCS = 
 
-!include $(FARDEV)\plugins\makefile_vc_def_inc
+!ifdef FAR3
+!include $(FARDEV)\plugins\makefile_vc_base
+!endif
 
+!include $(FARDEV)\plugins\makefile_vc_def_inc
 !include $(FARDEV)\plugins\makefile_vc_target_inc
 
 $(OBJDIR)\SimpleIndent.obj: SimpleIndent.cpp version.hpp $(COMINC)\plugin.hpp
