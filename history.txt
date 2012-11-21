@@ -6,6 +6,12 @@ Legend:  + added
          * changed
          ! fixed
 
+v2.2 21/11/12
+-------------
+
+ * Empty lines are not indented.
+ * Updated to Far3 build 2927.
+
 v2.1 03/03/12
 -------------
 
